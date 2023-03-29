@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit'
 
 const initialUiState = {isShowNotification: false, message: '', status: ''};
 
@@ -6,7 +6,7 @@ const uiSlice = createSlice({
     name: 'ui',
     initialState: initialUiState,
     reducers: {
-        showNotification(state, action) {
+        showNotification(state,action){
             state.isShowNotification = true;
             state.message = action.payload.message;
             state.status = action.payload.status;
