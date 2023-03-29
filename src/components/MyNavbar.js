@@ -33,9 +33,9 @@ const MyNavbar = () => {
             >
               MyProfile
             </NavLink>
-            <NavLink className="nav-link text-white" to="/myEmail"
+            <NavLink className="nav-link text-white" to="/compose-email"
             >
-              My Emails
+              Compose Email
             </NavLink>
           </Nav>
           

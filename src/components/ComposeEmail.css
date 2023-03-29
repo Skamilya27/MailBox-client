@@ -1,0 +1,16 @@
+.text-line {
+    background-color: transparent;
+    color: black;
+    outline: black;
+    outline-style: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid 1px darkgrey;
+    padding: 3px 10px;
+    width: 100%;
+}
+
+.radius {
+    border-radius: 5px;
+}
