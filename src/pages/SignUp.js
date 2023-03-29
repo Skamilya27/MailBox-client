@@ -1,43 +1,79 @@
-import React, { useRef } from 'react'
+import React, { useRef} from 'react'
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Button, Container, Form } from 'react-bootstrap'
 import classes from './SignUp.module.css'
+import { uiActions } from '../store/ui-slice';
 
 function SignUp() {
 
     const emailInputRef = useRef();
-    const passwordInputRef = useRef();
+  const passwordInputRef = useRef();
+  const confirmpasswordInputRef = useRef();
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
+  const dispatch = useDispatch();
 
-        const enteredEmail = emailInputRef.current.value;
-        const enteredPassword = passwordInputRef.current.value;
+  const submitHandler = async (event) => {
+    event.preventDefault();
 
-        try {
-            const response = await fetch(
-                "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCBzqLRbWoUs7hfh1riQJFqBOAmSmJwkKM",
-                {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        email: enteredEmail,
-                        password: enteredPassword,
-                        returnSecureToken: true,
-                    }),
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
+    const enteredPassword2 = confirmpasswordInputRef.current.value;
 
-            if(!response.ok) {
-                throw new Error("Something went wrong!!");
-            }
 
-            const data = await response.json();
-            console.log(data);
+    try {
+
+        if(!enteredEmail || !enteredPassword  || !enteredPassword2) {
+            return dispatch(uiActions.showNotification({
+                status: 'error',
+                message: 'Please fill in all fields'
+            }));
         }
-        catch (error) {
-            alert(error);
+
+        if(enteredPassword !== enteredPassword2){
+            return dispatch(uiActions.showNotification({
+                status: 'error',
+                message: 'Passwords do not match'
+              }));
         }
-    };  
+
+      const response = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCBzqLRbWoUs7hfh1riQJFqBOAmSmJwkKM",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPassword,
+            returnSecureToken: true,
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(response.error);
+      }
+
+      const data = await response.json();
+      console.log(data)
+
+      dispatch(uiActions.showNotification({
+        status: 'ok',
+        message: 'SignedUp succefully'
+      }));
+
+    } catch (error) {
+        console.log(error.message)
+        dispatch(uiActions.showNotification({
+            status: "error",
+            message: 'Something went wrong. PLease try again later',
+        }));
+    }
+
+    emailInputRef.current.value = '';
+    passwordInputRef.current.value = '';
+    confirmpasswordInputRef.current.value = '';
+  };
 
   return (
     <Container>
@@ -62,7 +98,7 @@ function SignUp() {
 
         <Form.Group className="mb-3" controlId="formBasicPassword1">
           <Form.Label>Confirm Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" />
+          <Form.Control type="password" placeholder="Password" ref={confirmpasswordInputRef} />
         </Form.Group>
 
         <Button
@@ -71,11 +107,15 @@ function SignUp() {
           onClick={submitHandler}
           className={classes.submit}
         >
-          Submit
+          Create Account
         </Button>
+        <br />
+        <div className='mt-2' style={{ textAlign: "center", marginLeft: '35px' }}>
+        <Link to = '/login' >Sign in here</Link>
+        </div>
       </Form>
     </Container>
-  )
+  );
 }
 
 export default SignUp
