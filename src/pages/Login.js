@@ -3,7 +3,7 @@ import {useDispatch} from 'react-redux';
 import { Button, Container, Form } from "react-bootstrap";
 import classes from "./Login.module.css";
 import { uiActions } from "../store/ui-slice";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { authActions } from "../store/auth-slice";
 
 const Login = () => {
@@ -91,6 +91,14 @@ const Login = () => {
         >
           Login
         </Button>
+        <br/>
+
+        <div
+          className="mt-2"
+          style={{ textAlign: "center", marginLeft: "-20px" }}
+        >
+        <Link to='/forgot-password'>Forgot password?</Link>
+        </div>
       </Form>
     </Container>
   );
