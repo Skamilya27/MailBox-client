@@ -66,6 +66,43 @@ export const getSentEmails = (emailId) => {
             }))
         }
         catch (error) {
+
+        }
+    }
+}
+
+export const getInboxEmails = (emailId) => {
+    let email;
+    if(email) {
+        email = emailId.replace(/[|&;$%@"<>.()+,]/g, "");
+    }
+
+    return async (dispatch) => {
+        const getEmails = async () => {
+            const response = await fetch(`https://mailbox-client-2d053-default-rtdb.firebaseio.com/${email}/emails.json`);
+
+            if(!response.ok) {
+                return dispatch(uiActions.showNotification({
+                    status: 'error',
+                    message: 'Something went wrong!!!'
+                }))
+            }
+            const data = await response.json();
+
+            return data;
+        }
+
+        try {
+            const emailData = await getEmails();
+            const filteredEmails = emailData.sentItems.filter(data => data.toEmail === emailId)
+
+             console.log('Filtered', filteredEmails);
+
+             dispatch(emailActions.inboxEmails({
+                receivedItems: filteredEmails || []
+             }))
+        }
+        catch (error) {
             
         }
     }
