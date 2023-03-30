@@ -1,56 +1,111 @@
 import { emailActions } from "./email-slice";
 import { uiActions } from "./ui-slice";
 
-export const storeEmail = (emailData, emailId) => {
+export const storeEmail = (emailData,emailId) => {
     let email;
-    if(emailId) {
+    if(emailId){
         email = emailId.replace(/[|&;$%@"<>.()+,]/g, "");
     }
-
     return async (dispatch) => {
         const storeData = async() => {
-            const response = await fetch(`https://mailbox-client-2d053-default-rtdb.firebaseio.com/${email}/emails.json`, {
+            const response = await fetch(`https://mailbox-client-2d053-default-rtdb.firebaseio.com/${email}/emails.json`,{
                 method: 'PUT',
                 body: JSON.stringify(emailData)
             });
-
-            if(!response.ok) {
-                return dispatch(uiActions.showNotification({
+    
+            if(!response.ok){
+                return () => {dispatch(uiActions.showNotification({
                     status: 'error',
                     message: 'Something went wrong!!!'
-                }));
-            }
+                  }));
 
-            dispatch(uiActions.showNotification({
-                status: 'ok',
-                message: 'Email sent successfully'
-            }));
+                  setTimeout(() => {
+                    dispatch(uiActions.setIsLoading());
+                  },2000)}
+            }
         }
 
-        try {
+        try{
             await storeData();
         }
-        catch(error) {
-
+        catch(error){
+    
         }
     }
 }
 
+
+export const storeInboxEmail = (emailData,emailId) => {
+
+    let email1 = [];
+    let emailData1 = [];
+
+
+    if(emailData){
+        emailData.sentItems.map(e => (
+            email1.push(e.toEmail)
+        ))
+
+
+        return async (dispatch) => {
+            const storeData = async(e2,emailData1) => {
+                const response = await fetch(`https://mailbox-client-2d053-default-rtdb.firebaseio.com/${e2}/emails/receivedItems.json`,{
+                    method: 'PUT',
+                    body: JSON.stringify(emailData1)
+                });
+        
+                if(!response.ok){
+                    return () => {dispatch(uiActions.showNotification({
+                        status: 'error',
+                        message: 'Something went wrong!!!'
+                      }));
+    
+                      setTimeout(() => {
+                        dispatch(uiActions.setIsLoading());
+                      },2000)}
+                }
+            }
+    
+            try{
+                for(const e1 in email1){
+                    const e2 = email1[e1].replace(/[|&;$%@"<>.()+,]/g, "")
+                    emailData1 = emailData.receivedItems.filter(t => t.toEmail === email1[e1])
+                    // emailData1 = [emailData1,emailData.sentItems.filter(t => t.toEmail === email1[e1])]
+                    dispatch(emailActions.inboxEmails({
+                        receivedItems: emailData.receivedItems || []
+                    }))
+                    console.log(emailData1)
+                    await storeData(e2,emailData1);
+                }
+            }
+            catch(error){
+        
+            }
+        }
+    }
+    
+}
+
+
+
 export const getSentEmails = (emailId) => {
     let email;
-    if(emailId) {
+    if(emailId){
         email = emailId.replace(/[|&;$%@"<>.()+,]/g, "");
     }
-
-    return async (disptach) => {
+    return async (dispatch) => {
         const getEmails = async () => {
             const response = await fetch(`https://mailbox-client-2d053-default-rtdb.firebaseio.com/${email}/emails.json`);
-
-            if(!response.ok) {
-                return disptach(uiActions.showNotification({
+    
+            if(!response.ok){
+                return () => {dispatch(uiActions.showNotification({
                     status: 'error',
                     message: 'Something went wrong!!!'
-                }));
+                  }));
+
+                  setTimeout(() => {
+                    dispatch(uiActions.setIsLoading());
+                  },2000)}
             }
 
             const data = await response.json();
@@ -58,14 +113,15 @@ export const getSentEmails = (emailId) => {
             return data;
         }
 
-        try {
+        try{
             const emailData = await getEmails();
 
-            disptach(emailActions.replaceEmail({
+            dispatch(emailActions.replaceEmail({
                 sentItems: emailData.sentItems || []
             }))
+
         }
-        catch (error) {
+        catch(error){
 
         }
     }
@@ -73,37 +129,39 @@ export const getSentEmails = (emailId) => {
 
 export const getInboxEmails = (emailId) => {
     let email;
-    if(email) {
+    if(emailId){
         email = emailId.replace(/[|&;$%@"<>.()+,]/g, "");
     }
-
     return async (dispatch) => {
         const getEmails = async () => {
             const response = await fetch(`https://mailbox-client-2d053-default-rtdb.firebaseio.com/${email}/emails.json`);
-
-            if(!response.ok) {
-                return dispatch(uiActions.showNotification({
+    
+            if(!response.ok){
+                return () => {dispatch(uiActions.showNotification({
                     status: 'error',
                     message: 'Something went wrong!!!'
-                }))
+                  }));
+
+                  setTimeout(() => {
+                    dispatch(uiActions.setIsLoading());
+                  },2000)}
             }
+
             const data = await response.json();
 
             return data;
         }
 
-        try {
+        try{
             const emailData = await getEmails();
-            const filteredEmails = emailData.sentItems.filter(data => data.toEmail === emailId)
 
-             console.log('Filtered', filteredEmails);
+            dispatch(emailActions.inboxEmails({
+                receivedItems: emailData.receivedItems || []
+            }))
 
-             dispatch(emailActions.inboxEmails({
-                receivedItems: filteredEmails || []
-             }))
         }
-        catch (error) {
-            
+        catch(error){
+
         }
     }
 }

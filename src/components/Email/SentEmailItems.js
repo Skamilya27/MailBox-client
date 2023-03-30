@@ -1,0 +1,36 @@
+import { useState } from "react";
+import "./InboxEmailItem.css";
+import { useDispatch } from "react-redux";
+import { emailActions } from "../../store/email-slice";
+import { Button } from "react-bootstrap";
+
+const SentEmailItems = (props) => {
+    const { toEmail, subject, body } = props;
+    const [show, setShow] = useState(false);
+    const [ isRead, setIsRead ] = useState(false);
+    const dispatch = useDispatch();
+
+    const openEmailHandler = () => {
+        setShow(!show)
+        setIsRead(true);
+    }
+
+    const deleteEmailHandler = () => {
+        dispatch(emailActions.removeSentEmail(subject))
+    }
+
+    return (
+        <>
+            <tr style={{backgroundColor: `${isRead === false ? 'lightblue' : 'white'}`}} >
+                <td>{toEmail}</td>
+                <td>{subject}</td>
+                <td><Button variant='success' onClick={openEmailHandler}>Open Email</Button></td>
+                <td><Button variant="danger" onClick={deleteEmailHandler}>Delete Email</Button></td>
+            </tr>
+
+            {show && <tr><td>{body}</td></tr>}
+        </>
+    );
+};
+
+export default SentEmailItems;

@@ -3,7 +3,7 @@ import {useDispatch} from 'react-redux';
 import { Button, Container, Form } from "react-bootstrap";
 import classes from "./Login.module.css";
 import { uiActions } from "../store/ui-slice";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { authActions } from "../store/auth-slice";
 
 const Login = () => {
@@ -49,13 +49,19 @@ const Login = () => {
         message: 'Logged in succefully'
       }));
 
-      // history.replace('/navbar')
+      setTimeout(() => {
+        dispatch(uiActions.setIsLoading());
+      }, 2000)
 
     } catch (error) {
         dispatch(uiActions.showNotification({
             status: 'error',
             message: 'Something went wrong'
           }));
+
+          setTimeout(() => {
+            dispatch(uiActions.setIsLoading());
+          }, 2000)
     }
 
     emailInputRef.current.value = '';

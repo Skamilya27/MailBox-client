@@ -10,7 +10,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ComposeEmail from './components/ComposeEmail';
 import SentEmails from './components/Email/SentEmails';
 import { useEffect } from 'react';
-import {  getInboxEmails, getSentEmails, storeEmail } from './store/email-actions';
+import {  getInboxEmails, getSentEmails, storeEmail, storeInboxEmail } from './store/email-actions';
 
 let isInitial = true;
 
@@ -39,6 +39,14 @@ function App() {
       return
     }
     dispatch(storeEmail(emailData, emailId))
+  }, [emailData, emailId, dispatch])
+
+  useEffect(() => {
+    if(isInitial) {
+      isInitial = false
+      return
+    }
+    dispatch(storeInboxEmail(emailData, emailId))
   }, [emailData, emailId, dispatch])
 
   return (
