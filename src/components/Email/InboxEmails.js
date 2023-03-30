@@ -16,7 +16,8 @@ const InboxEmails = () => {
                 <InboxEmailItem
                     subject={email.subject}
                     body={email.body}
-                    fromEmail={email.toEmail}
+                    fromEmail={email.fromEmail}
+                    isRead = {email.isRead}
                 />
             ))}
         </table>

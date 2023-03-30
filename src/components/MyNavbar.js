@@ -7,6 +7,8 @@ const MyNavbar = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
 
+  const unReadCount = useSelector(state => state.emailStore.unReadCount);
+
   const logoutHandler = () => {
     dispatch(authActions.logout());
   };
@@ -38,6 +40,7 @@ const MyNavbar = () => {
                 </NavLink>
                 <NavLink className="nav-link text-white" to="/inbox-email">
                   Inbox
+                  <h7 style={{color: 'green'}}>{unReadCount}</h7>
                 </NavLink>
               </>
             )}
