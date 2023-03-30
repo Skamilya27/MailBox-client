@@ -10,7 +10,7 @@ const Login = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
 
-  const history = useHistory();
+  // const history = useHistory();
 
   const dispatch = useDispatch();
 
@@ -49,7 +49,7 @@ const Login = () => {
         message: 'Logged in succefully'
       }));
 
-      history.replace('/navbar')
+      // history.replace('/navbar')
 
     } catch (error) {
         dispatch(uiActions.showNotification({
